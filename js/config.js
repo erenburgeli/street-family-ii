@@ -30,8 +30,8 @@ SF.CONFIG = {
     girl: "photos/girl.jpg",
     twins: "photos/twins.jpg",
   },
-  revealHoldMs: 3000,   // how long each reveal stays before PRESS TO CONTINUE shows
-  revealAutoMs: 8000,   // each reveal moves on by itself after this (tap skips sooner)
+  revealHoldMs: 1500,   // how long each reveal stays before PRESS TO CONTINUE shows
+  revealAutoMs: 4000,   // each reveal moves on by itself after this (tap skips sooner)
   continueSeconds: 10,  // GAME NOT OVER countdown (auto-inserts the coin at 0)
   viewHeight: 240,      // logical pixel height of the game canvas
 };
