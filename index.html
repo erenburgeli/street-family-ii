@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="An arcade-style announcement on a Tel Aviv street. Insert a coin to find out.">
+<meta property="og:title" content="Street Family II">
+<meta property="og:description" content="An arcade-style announcement on a Tel Aviv street. Insert a coin to find out.">
+<meta property="og:type" content="website">
+<title>Street Family II</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  /* Single deliberate look: a dark arcade screen in every host theme. Full-screen canvas stage. */
+  :root {
+    color-scheme: dark;
+    --bg: #000;
+    --fg: #fff;
+    --accent: #ffd400;
+    --scan: rgba(0, 0, 0, 0.16);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden;
+    background: var(--bg); color: var(--fg);
+    touch-action: manipulation; user-select: none; -webkit-user-select: none;
+    overscroll-behavior: none;
+  }
+  #stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+  #game {
+    display: block; image-rendering: pixelated; image-rendering: crisp-edges;
+  }
+  #hud { position: absolute; pointer-events: none; image-rendering: pixelated; image-rendering: crisp-edges; }
+  /* Photo shown on the cabinet CRT, positioned by cabinet.js */
+  #crt {
+    position: absolute; overflow: hidden; display: none; pointer-events: none;
+    border-radius: 6% / 8%; background: #000;
+  }
+  #crt img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #crt canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+  #crt::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0 2px, var(--scan) 2px 3px),
+      radial-gradient(ellipse at center, transparent 65%, rgba(0,0,0,.45) 100%);
+    box-shadow: inset 0 0 24px rgba(120, 200, 255, .35);
+  }
+  #mute {
+    position: fixed; z-index: 10;
+    top: calc(env(safe-area-inset-top, 0px) + 10px);
+    right: calc(env(safe-area-inset-right, 0px) + 10px);
+    width: 44px; height: 44px; padding: 0; border: 2px solid var(--fg); border-radius: 4px;
+    background: rgba(0,0,0,.55); cursor: pointer; image-rendering: pixelated;
+  }
+  #mute:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  #mute svg { width: 28px; height: 28px; display: block; margin: auto; shape-rendering: crispEdges; }
+  #mute .x { display: none; }
+  #mute.off .waves { display: none; }
+  #mute.off .x { display: inline; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="game"></canvas>
+  <div id="crt"><img id="crtImg" alt=""><canvas id="crtFx"></canvas></div>
+  <canvas id="hud"></canvas>
+</div>
+<button id="mute" aria-label="Mute sound">
+  <svg viewBox="0 0 14 14" fill="#fff">
+    <path d="M1 5h3l4-3v10l-4-3H1z"/>
+    <g class="waves"><rect x="10" y="4" width="1" height="6"/><rect x="12" y="2" width="1" height="10"/></g>
+    <g class="x"><rect x="9" y="4" width="1" height="1"/><rect x="10" y="5" width="1" height="1"/><rect x="11" y="6" width="1" height="1"/><rect x="12" y="7" width="1" height="1"/><rect x="13" y="8" width="1" height="1"/><rect x="13" y="4" width="1" height="1"/><rect x="12" y="5" width="1" height="1"/><rect x="10" y="7" width="1" height="1"/><rect x="9" y="8" width="1" height="1"/></g>
+  </svg>
+</button>
+<script src="js/config.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/sprites-world.js"></script>
+<script src="js/sprites-family.js"></script>
+<script src="js/actors.js"></script>
+<script src="js/street-bg.js"></script>
+<script src="js/street.js"></script>
+<script src="js/cabinet.js"></script>
+<script src="js/scenes.js"></script>
+<script src="js/intro.js"></script>
+<script src="js/reveal.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
