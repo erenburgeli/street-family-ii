@@ -1,4 +1,4 @@
-// 2. CHARACTER INTRO — SF2 select-style: each family member slides in with a flash + name plate,
+// 2. CHARACTER INTRO - SF2 select-style: each family member slides in with a flash + name plate,
 // then a group pose with "READY?". Tap skips ahead.
 (function () {
   const C = SF.CONFIG;

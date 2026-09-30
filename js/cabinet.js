@@ -150,7 +150,7 @@
   };
 
   // ------------------------------------------------------------------
-  // 3. CABINET ARRIVES — family steps aside, cabinet slams down, dust + flash
+  // 3. CABINET ARRIVES - family steps aside, cabinet slams down, dust + flash
   const dust = [];
   SF.scenes.cabinet = {
     enter() {

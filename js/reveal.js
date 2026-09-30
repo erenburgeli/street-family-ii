@@ -187,7 +187,7 @@
     },
   };
 
-  // ---------- 7. FINALE — twins photo, COMING FALL '27, fireworks, victory
+  // ---------- 7. FINALE - twins photo, COMING FALL '27, fireworks, victory
   const fw = [];
   function launch() {
     const S = SF.street;
@@ -278,14 +278,21 @@
       if (this.planeX !== undefined) drawPlane(c, this.planeX, this.planeY || 20, this.t);
       drawConfetti(SF.hud, 1 / 60);
       if (this.slam) {
-        const top = cab.top(), parts = C.texts.finale.split(" ");
-        const lines = W < 420 && parts.length > 1 ? [parts.slice(0, -1).join(" "), parts[parts.length - 1]] : [C.texts.finale];
-        const size = Math.min(...lines.map((l) => SF.fitSize(l, 32, W - 12)));
-        const y0 = SF.clamp(top - lines.length * (size + 6) - 10, 8, H * 0.3);
-        this.planeY = y0 > 70 ? Math.round(y0 * 0.3) : Math.round(y0 + lines.length * (size + 6) + 8);
-        if (this.t > 2.6) lines.forEach((l, i) => bigText(SF.hud, l, y0 + i * (size + 6), size, this.t - 2.6 - i * 0.12));
-        const r = cab.screenRect(), ts = SF.fitSize(C.texts.twins, 24, W - 12);   // centred over the twins photo
-        bigText(SF.hud, C.texts.twins, Math.round(r.y + r.h / 2 - ts / 2), 24, this.t - 1.8);
+        // IT'S TWINS! + COMING SPRING '27 stacked in the sky, kept clear of the photo on the CRT
+        const r = cab.screenRect(), parts = C.texts.finale.split(" ");
+        const oneLine = SF.fitSize(C.texts.finale, 24, W - 12) >= 12 || parts.length < 2;
+        const lines = oneLine ? [C.texts.finale] : [parts.slice(0, -1).join(" "), parts[parts.length - 1]];
+        const muteW = Math.ceil(60 / SF.view.scale);   // keep clear of the mute button
+        let ts = SF.fitSize(C.texts.twins, 32, W - 12 - 2 * muteW), size = Math.min(...lines.map((l) => SF.fitSize(l, 24, W - 12)));
+        const blockH = () => ts + 14 + lines.length * (size + 6);
+        // prefer the sky above the cabinet; fall back to overlapping the marquee, never the photo
+        const limit = blockH() <= cab.top() - 10 ? cab.top() - 4 : r.y - 6;
+        while (blockH() > limit - 6 && (ts > 8 || size > 8)) { if (ts >= size && ts > 8) ts -= 2; else size -= 2; }
+        const y0 = SF.clamp(limit - blockH(), 6, H * 0.3);
+        this.planeY = y0 > 40 ? Math.round(y0 * 0.35) : Math.round(y0 + 2);
+        bigText(SF.hud, C.texts.twins, y0, ts, this.t - 1.8);
+        const y1 = y0 + ts + 14;
+        if (this.t > 2.6) lines.forEach((l, i) => bigText(SF.hud, l, y1 + i * (size + 6), size, this.t - 2.6 - i * 0.12));
       }
       if (this.thanks) {
         const y = H - 30;

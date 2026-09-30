@@ -4,16 +4,31 @@
   const mk = (w, h) => { const c = document.createElement("canvas"); c.width = w; c.height = h; return c; };
   const rnd = SF.rand, pick = SF.pick;
 
-  // Pixel-crisp text (thresholded alpha) — used for the Hebrew shop signs
+  // Hand-drawn 8px pixel Hebrew (only the letters the shop signs use). Drawn right-to-left.
+  const HEB = {
+    "\u05d0": ["     ", "#   #", "##  #", " # # ", "  #  ", " # # ", "#  ##", "#   #"],
+    "\u05dc": ["#    ", "#    ", "#####", "    #", "    #", "   # ", "  #  ", "  #  "],
+    "\u05e4": ["     ", "#####", "#   #", "##  #", "    #", "    #", "    #", "#####"],
+    "\u05de": ["     ", "# ## ", "##  #", "#   #", "#   #", "#   #", "#   #", "## ##"],
+    "\u05db": ["     ", "#### ", "    #", "    #", "    #", "    #", "    #", "#### "],
+    "\u05d5": ["  ", "##", " #", " #", " #", " #", " #", " #"],
+    "\u05ea": ["     ", "#####", " #  #", " #  #", " #  #", " #  #", " #  #", "##  #"],
+    "\u05e7": ["     ", "#####", "    #", "#   #", "#   #", "#  # ", "#    ", "#    "],
+    "\u05d9": ["  ", "##", " #", " #", "  ", "  ", "  ", "  "],
+    "\u05e1": ["     ", "#### ", "#   #", "#   #", "#   #", "#   #", "#   #", " ### "],
+    "\u05d7": ["     ", "#####", "#   #", "#   #", "#   #", "#   #", "#   #", "#   #"],
+  };
   SF.crispText = (g, str, x, y, size, col) => {
-    const t = mk(str.length * size + 10, size + 6), tg = t.getContext("2d");
-    tg.font = "bold " + size + "px Arial, 'Noto Sans Hebrew', sans-serif"; tg.textBaseline = "top";
-    tg.fillStyle = col; tg.fillText(str, 2, 1);
-    const w = Math.ceil(tg.measureText(str).width);
-    const d = tg.getImageData(0, 0, t.width, t.height), p = d.data;
-    for (let i = 3; i < p.length; i += 4) p[i] = p[i] > 70 ? 255 : 0;
-    tg.putImageData(d, 0, 0);
-    g.drawImage(t, Math.round(x - w / 2) - 2, Math.round(y) - 1);
+    const chars = [...str], k = size >= 16 ? 2 : 1, gap = k;
+    const width = chars.reduce((w, ch) => w + ((HEB[ch] || HEB["\u05d5"])[0].length) * k + gap, -gap);
+    let cx = Math.round(x + width / 2);                    // first letter is rightmost
+    g.fillStyle = col;
+    for (const ch of chars) {
+      const gl = HEB[ch]; if (!gl) { cx -= 4 * k; continue; }
+      const w = gl[0].length * k; cx -= w;
+      gl.forEach((row, ry) => { for (let rx = 0; rx < row.length; rx++) if (row[rx] === "#") g.fillRect(cx + rx * k, Math.round(y) + 1 + ry * k, k, k); });
+      cx -= gap;
+    }
   };
 
   SF.paintStreet = (S) => {
@@ -200,8 +215,8 @@
   function shop(g, x, w, y, h, type, dyn) {
     const R = (xx, yy, ww, hh, c) => { g.fillStyle = c; g.fillRect(xx | 0, yy | 0, ww | 0, hh | 0); };
     const signs = {
-      falafel: ["#ffd84a", "#c81e1e", "פלאפל"], makolet: ["#2e8a4a", "#ffffff", "מכולת"],
-      kiosk: ["#2a5ab8", "#ffffff", "קיוסק"], hummus: ["#f2efe4", "#8a4a1a", "חומוס"], arcade: ["#1a1020", "#1a1020", ""],
+      falafel: ["#ffd84a", "#c81e1e", "\u05e4\u05dc\u05d0\u05e4\u05dc"], makolet: ["#2e8a4a", "#ffffff", "\u05de\u05db\u05d5\u05dc\u05ea"],
+      kiosk: ["#2a5ab8", "#ffffff", "\u05e7\u05d9\u05d5\u05e1\u05e7"], hummus: ["#f2efe4", "#8a4a1a", "\u05d7\u05d5\u05de\u05d5\u05e1"], arcade: ["#1a1020", "#1a1020", ""],
     };
     const [bg, fg, txt] = signs[type];
     R(x, y, w, 13, "#3a2e2a"); R(x + 1, y + 1, w - 2, 11, bg);
